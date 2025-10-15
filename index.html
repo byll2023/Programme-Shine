@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Programme Shine ferargile — Formulaire</title>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #0f766e;
+            --bg: #f6f7f9;
+            --card: #fff;
+            --muted: #6b7280;
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: "Poppins", system-ui, Arial;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #0f172a;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 760px;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+        }
+
+        header {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 14px
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px
+        }
+
+        p.lead {
+            margin: 6px 0 0;
+            color: var(--muted)
+        }
+
+        form {
+            display: grid;
+            gap: 14px;
+            margin-top: 8px
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .field {
+            flex: 1;
+            min-width: 160px
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #0f172a
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e6e9ef;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical
+        }
+
+        /* rating */
+        .rating {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .star {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid #e6e9ef;
+            background: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .star.selected {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent
+        }
+
+        /* upload preview */
+        .uploads {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .upload-preview {
+            width: 86px;
+            height: 86px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px dashed #e6e9ef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--muted);
+            overflow: hidden;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 6px
+        }
+
+        .btn {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 0;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn.secondary {
+            background: #111827
+        }
+
+        .msg {
+            display: none;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center
+        }
+
+        .msg.success {
+            background: linear-gradient(90deg, #ecfdf5, #bbf7d0);
+            color: #065f46;
+            display: none
+        }
+
+        .msg.error {
+            background: linear-gradient(90deg, #fff1f2, #fecaca);
+            color: #991b1b;
+            display: none
+        }
+
+        footer {
+            margin-top: 12px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        @media(max-width:520px) {
+            .star {
+                width: 42px;
+                height: 42px
+            }
+
+            .logo {
+                width: 48px;
+                height: 48px
+            }
+
+            .upload-preview {
+                width: 72px;
+                height: 72px
+            }
+        }
+    </style>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script> (function () { emailjs.init("4NHyPfpmCWsVhqyAO"); })(); </script>
+</head>
+
+<body>
+    <div class="card">
+        <header>
+            <div class="logo">F</div>
+            <div>
+                <h1>Programme Shine — ferargile</h1>
+                <p class="lead">Merci d'avoir testé nos chaussettes ! Partage ton avis, ta note et une photo si tu veux.
+                </p>
+            </div>
+        </header>
+
+        <main>
+            <form id="testerForm" autocomplete="off">
+                <div class="row">
+                    <div class="field">
+                        <label for="name">Nom (optionnel)</label>
+                        <input id="name" name="name" type="text" placeholder="Ex : Jean Tremblay">
+                    </div>
+                    <div class="field">
+                        <label for="email">E-mail</label>
+                        <input id="email" name="email" type="email" placeholder="exemple@mail.com" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label>Note générale</label>
+                    <div class="rating" id="rating">
+                        <button type="button" class="star" data-value="1">1</button>
+                        <button type="button" class="star" data-value="2">2</button>
+                        <button type="button" class="star" data-value="3">3</button>
+                        <button type="button" class="star" data-value="4">4</button>
+                        <button type="button" class="star" data-value="5">5</button>
+                    </div>
+                    <!-- champ caché pour envoyer la note -->
+                    <input type="hidden" id="ratingValue" name="rating" value="5">
+                </div>
+
+                <div>
+                    <label for="comment">Commentaire</label>
+                    <textarea id="comment" name="comment" placeholder="Ex : Très confortables..."></textarea>
+                </div>
+
+                <div>
+                    <label>Télécharge une photo (optionnel)</label>
+                    <div class="uploads">
+                        <input id="photo" name="photo" type="file" accept="image/*">
+                        <div class="upload-preview" id="preview">Aucune</div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn">Envoyer mon retour</button>
+                    <button type="button" id="skipBtn" class="btn secondary">Aller sur Facebook</button>
+                    <div style="flex:1" class="muted">Tu recevras un e-mail de bienvenue après l'envoi.</div>
+                </div>
+            </form>
+
+            <div class="msg success" id="successMsg">
+                ✅ Merci pour ton retour ! Un e-mail de bienvenue vient d’être envoyé.
+            </div>
+            <div class="msg error" id="errorMsg">
+                ❌ Erreur lors de l'envoi — vérifie ta connexion ou la configuration EmailJS.
+            </div>
+
+        </main>
+
+        <footer>
+            <small>Fitloam — L’échantillon vous a été offert.</small>
+        </footer>
+    </div>
+
+    <script>
+        // --- CONFIG ---
+        const SERVICE_ID = "service_9od4cf4";           // remplace
+        const TEMPLATE_ID_ADMIN = "TEMPLATE_ID_ADMIN"; // remplace (mail que tu reçois)
+        const TEMPLATE_ID_CLIENT = "TEMPLATE_ID_CLIENT"; // remplace (mail client)
+        const FACEBOOK_REVIEWS_URL = "https://bit.ly/PassionrandoQc";
+        const PROMO_CODE = "TEST15"; // si utile dans tes templates
+
+        // DOM
+        const stars = document.querySelectorAll('.star');
+        const ratingHidden = document.getElementById('ratingValue');
+        const preview = document.getElementById('preview');
+        const photoInput = document.getElementById('photo');
+        const form = document.getElementById('testerForm');
+        const successMsg = document.getElementById('successMsg');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // rating UI
+        function setSelectedRating(val) {
+            ratingHidden.value = val;
+            stars.forEach(s => {
+                const v = Number(s.dataset.value);
+                if (v <= val) s.classList.add('selected'); else s.classList.remove('selected');
+            });
+        }
+        stars.forEach(s => s.addEventListener('click', () => setSelectedRating(Number(s.dataset.value))));
+        setSelectedRating(5);
+
+        // preview image
+        photoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) { preview.textContent = 'Aucune'; preview.innerHTML = 'Aucune'; return; }
+            const img = document.createElement('img');
+            img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
+            const reader = new FileReader();
+            reader.onload = () => { img.src = reader.result; preview.innerHTML = ''; preview.appendChild(img); }
+            reader.readAsDataURL(file);
+        });
+
+        // open facebook
+        document.getElementById('skipBtn').addEventListener('click', () => window.open(FACEBOOK_REVIEWS_URL, '_blank'));
+
+        // helper: convert FormData entries to plain object (for console)
+        function formToObject(fd) {
+            const obj = {};
+            for (const [k, v] of fd.entries()) obj[k] = v;
+            return obj;
+        }
+
+        // submit
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const comment = document.getElementById('comment').value.trim();
+            const rating = document.getElementById('ratingValue').value;
+            const file = photoInput.files[0] || null;
+
+            // convert image to base64 if present
+            let imageBase64 = "";
+            if (file) {
+                try {
+                    imageBase64 = await fileToBase64(file); // string "data:image/..."
+                } catch (e) {
+                    console.error("Erreur lecture fichier:", e);
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+            }
+
+            // payload admin (pour toi)
+            const adminParams = {
+                tester_name: name || "(anonyme)",
+                tester_email: email,
+                tester_rating: rating,
+                tester_comment: comment,
+                tester_image: imageBase64, // utilise dans ton template (affichage <img src="{{tester_image}}">)
+                promo_code: PROMO_CODE
+            };
+
+            // payload client (message de bienvenue personnalisé)
+            const clientMessage = `
+🌲 Une nouvelle aventure commence avec Fitloam
+
+Bonjour ${name ? name : ""},
+
+Chez Fitloam, nous ne faisons pas que des chaussettes —
+nous prenons soin de votre santé, de votre confort et de votre plaisir d’explorer.
+
+Vous faites désormais partie de la famille ferargile,
+et pour aller plus loin ensemble, nous avons créé un espace unique :
+👉 Passion Randonnée Québec, un groupe Facebook où les membres partagent leurs sorties, créent leurs propres événements et se connectent entre passionnés de nature et d’aventure.
+
+🎁 En rejoignant le groupe, vous bénéficiez de :
+• 15 % de réduction sur ferargile.com chaque 15 du mois (livraison gratuite partout au Canada)
+• Un accès exclusif au programme Shine – testez gratuitement nos produits Fitloam pour nous aider à les perfectionner
+• Une seconde chance de gagner à notre jeu concours ferargile 🎉  → https://jeu-ferargile.web.app
+
+Chez Fitloam, nous croyons que chaque pas compte.
+Plus qu’une marque, c’est une communauté, une famille qui valorise la découverte, la nature et le bien-être.
+
+🌿 Rejoignez-nous dès aujourd’hui → https://bit.ly/PassionrandoQc
+
+À très bientôt sur les sentiers,
+L’équipe Fitloam
+`;
+
+            const clientParams = {
+                to_name: name || "randonneur(se)",
+                to_email: email,
+                message_body: clientMessage,
+                promo_code: PROMO_CODE
+            };
+
+            try {
+                // envoie à l'admin
+                await emailjs.send(SERVICE_ID, TEMPLATE_ID_ADMIN, adminParams);
+                // envoie au client
+                await emailjs.send(SERVICE_ID, TEMPLATE_ID_CLIENT, clientParams);
+
+                // feedback UI
+                form.style.display = 'none';
+                successMsg.style.display = 'block';
+            } catch (err) {
+                console.error("EmailJS error:", err);
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        // util: lire fichier en base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => { reader.abort(); reject(new DOMException("Problem parsing input file.")); };
+                reader.onload = () => { resolve(reader.result); };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+
+</html>
