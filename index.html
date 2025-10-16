@@ -227,11 +227,33 @@
                 height: 72px
             }
         }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .msg.success {
+            animation: fadeIn 0.4s ease;
+        }
     </style>
 
     <!-- EmailJS SDK -->
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script> (function () { emailjs.init("4NHyPfpmCWsVhqyAO"); })(); </script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function () {
+            emailjs.init({
+                publicKey: "4NHyPfpmCWsVhqyAO"
+            });
+        })();
+    </script>
 </head>
 
 <body>
@@ -308,8 +330,8 @@
     <script>
         // --- CONFIG ---
         const SERVICE_ID = "service_9od4cf4";           // remplace
-        const TEMPLATE_ID_ADMIN = "TEMPLATE_ID_ADMIN"; // remplace (mail que tu reçois)
-        const TEMPLATE_ID_CLIENT = "TEMPLATE_ID_CLIENT"; // remplace (mail client)
+        const TEMPLATE_ID_ADMIN = "template_fg9dxx6"; // remplace (mail que tu reçois)
+        const TEMPLATE_ID_CLIENT = "template_rjub2ui"; // remplace (mail client)
         const FACEBOOK_REVIEWS_URL = "https://bit.ly/PassionrandoQc";
         const PROMO_CODE = "TEST15"; // si utile dans tes templates
 
