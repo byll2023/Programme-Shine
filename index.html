@@ -246,11 +246,11 @@
     </style>
 
     <!-- EmailJS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
         (function () {
             emailjs.init({
-                publicKey: "4NHyPfpmCWsVhqyAO"
+                publicKey: "t3wLzAi9_luRE7pJT"
             });
         })();
     </script>
@@ -333,7 +333,7 @@
         const TEMPLATE_ID_ADMIN = "template_fg9dxx6"; // remplace (mail que tu reçois)
         const TEMPLATE_ID_CLIENT = "template_rjub2ui"; // remplace (mail client)
         const FACEBOOK_REVIEWS_URL = "https://bit.ly/PassionrandoQc";
-        const PROMO_CODE = "TEST15"; // si utile dans tes templates
+        const PROMO_CODE = "" // <-- vide ici
 
         // DOM
         const stars = document.querySelectorAll('.star');
@@ -392,7 +392,13 @@
             let imageBase64 = "";
             if (file) {
                 try {
-                    imageBase64 = await fileToBase64(file); // string "data:image/..."
+                    imageBase64 = await resizeImage(file);
+
+                    // tronquer si trop long pour EmailJS
+                    const MAX_SIZE = 45000; // ~45Ko
+                    if (imageBase64.length > MAX_SIZE) {
+                        imageBase64 = imageBase64.substring(0, MAX_SIZE);
+                    }
                 } catch (e) {
                     console.error("Erreur lecture fichier:", e);
                     errorMsg.style.display = 'block';
@@ -400,12 +406,15 @@
                 }
             }
 
+            // limiter la taille du commentaire
+            let safeComment = comment.substring(0, 2000); // max 2000 caractères
+
             // payload admin (pour toi)
             const adminParams = {
                 tester_name: name || "(anonyme)",
                 tester_email: email,
                 tester_rating: rating,
-                tester_comment: comment,
+                tester_comment: safeComment,
                 tester_image: imageBase64, // utilise dans ton template (affichage <img src="{{tester_image}}">)
                 promo_code: PROMO_CODE
             };
@@ -459,14 +468,17 @@ L’équipe Fitloam
             }
         });
 
-        // util: lire fichier en base64
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onerror = () => { reader.abort(); reject(new DOMException("Problem parsing input file.")); };
-                reader.onload = () => { resolve(reader.result); };
-                reader.readAsDataURL(file);
-            });
+        // --- UTILITAIRE : REDIMENSIONNEMENT D’IMAGE ---
+        async function resizeImage(file, maxWidth = 600, maxHeight = 600) {
+            const img = await createImageBitmap(file);
+            const canvas = document.createElement("canvas");
+            const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            // compression JPEG à 70%
+            return canvas.toDataURL("image/jpeg", 0.7);
         }
     </script>
 </body>
