@@ -9,6 +9,7 @@
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
+
     <style>
         :root {
             --accent: #0f766e;
@@ -112,7 +113,6 @@
             resize: vertical
         }
 
-        /* rating */
         .rating {
             display: flex;
             gap: 8px;
@@ -138,7 +138,6 @@
             border-color: transparent
         }
 
-        /* upload preview */
         .uploads {
             display: flex;
             gap: 12px;
@@ -157,6 +156,26 @@
             font-size: 12px;
             color: var(--muted);
             overflow: hidden;
+            position: relative;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         .muted {
@@ -195,13 +214,14 @@
         .msg.success {
             background: linear-gradient(90deg, #ecfdf5, #bbf7d0);
             color: #065f46;
-            display: none
+            display: none;
+            animation: fadeIn 0.4s ease;
         }
 
         .msg.error {
             background: linear-gradient(90deg, #fff1f2, #fecaca);
             color: #991b1b;
-            display: none
+            display: none;
         }
 
         footer {
@@ -239,21 +259,11 @@
                 transform: scale(1);
             }
         }
-
-        .msg.success {
-            animation: fadeIn 0.4s ease;
-        }
     </style>
 
     <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script>
-        (function () {
-            emailjs.init({
-                publicKey: "t3wLzAi9_luRE7pJT"
-            });
-        })();
-    </script>
+
 </head>
 
 <body>
@@ -327,13 +337,30 @@
         </footer>
     </div>
 
-    <script>
-        // --- CONFIG ---
-        const SERVICE_ID = "service_9od4cf4";           // remplace
-        const TEMPLATE_ID_ADMIN = "template_fg9dxx6"; // remplace (mail que tu reçois)
-        const TEMPLATE_ID_CLIENT = "template_rjub2ui"; // remplace (mail client)
+    <!-- Firebase + logique JS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+
+        // --- CONFIG Firebase ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwS7EkknPdPAYv7aYPDleIdB4c3U7VWkM",
+            authDomain: "testeurs-fitloam.firebaseapp.com",
+            projectId: "testeurs-fitloam",
+            storageBucket: "testeurs-fitloam.appspot.com",
+            messagingSenderId: "686732299949",
+            appId: "1:686732299949:web:bc791eff26a22bacdf8024"
+        };
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+
+        // --- CONFIG EmailJS ---
+        emailjs.init("t3wLzAi9_luRE7pJT");
+        const SERVICE_ID = "service_9od4cf4";
+        const TEMPLATE_ID_ADMIN = "template_fg9dxx6";
+        const TEMPLATE_ID_CLIENT = "template_rjub2ui";
         const FACEBOOK_REVIEWS_URL = "https://bit.ly/PassionrandoQc";
-        const PROMO_CODE = "" // <-- vide ici
+        const PROMO_CODE = "";
 
         // DOM
         const stars = document.querySelectorAll('.star');
@@ -344,39 +371,57 @@
         const successMsg = document.getElementById('successMsg');
         const errorMsg = document.getElementById('errorMsg');
 
-        // rating UI
+        // --- Rating ---
         function setSelectedRating(val) {
             ratingHidden.value = val;
-            stars.forEach(s => {
-                const v = Number(s.dataset.value);
-                if (v <= val) s.classList.add('selected'); else s.classList.remove('selected');
-            });
+            stars.forEach(s => s.classList.toggle('selected', s.dataset.value <= val));
         }
         stars.forEach(s => s.addEventListener('click', () => setSelectedRating(Number(s.dataset.value))));
         setSelectedRating(5);
 
-        // preview image
-        photoInput.addEventListener('change', (e) => {
+        // --- Preview + validation image ---
+        const MAX_SIZE_MB = 5;
+        photoInput.addEventListener('change', e => {
             const file = e.target.files[0];
-            if (!file) { preview.textContent = 'Aucune'; preview.innerHTML = 'Aucune'; return; }
-            const img = document.createElement('img');
-            img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
+            if (!file) { preview.textContent = 'Aucune'; return; }
+            if (!file.type.startsWith('image/')) { alert("Le fichier doit être une image !"); photoInput.value = ''; preview.textContent = 'Aucune'; return; }
+            if (file.size > MAX_SIZE_MB * 1024 * 1024) { alert(`La taille de l'image doit être < ${MAX_SIZE_MB} Mo.`); photoInput.value = ''; preview.textContent = 'Aucune'; return; }
+
             const reader = new FileReader();
-            reader.onload = () => { img.src = reader.result; preview.innerHTML = ''; preview.appendChild(img); }
+            reader.onload = () => preview.innerHTML = `<img src="${reader.result}" style="width:100%;height:100%;object-fit:cover">`;
             reader.readAsDataURL(file);
         });
 
-        // open facebook
+        // --- Redirection Facebook ---
         document.getElementById('skipBtn').addEventListener('click', () => window.open(FACEBOOK_REVIEWS_URL, '_blank'));
 
-        // helper: convert FormData entries to plain object (for console)
-        function formToObject(fd) {
-            const obj = {};
-            for (const [k, v] of fd.entries()) obj[k] = v;
-            return obj;
+        // --- Upload image sur Firebase Storage ---
+
+        // --- Upload Firebase avec loader ---
+        async function uploadImage(file, maxWidth = 600, maxHeight = 600, quality = 0.7) {
+            if (!file) return "";
+            const fileName = `${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, `testeurs/${fileName}`);
+
+            const imgBitmap = await createImageBitmap(file);
+            const scale = Math.min(maxWidth / imgBitmap.width, maxHeight / imgBitmap.height, 1);
+            const canvas = document.createElement("canvas");
+            canvas.width = imgBitmap.width * scale;
+            canvas.height = imgBitmap.height * scale;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(imgBitmap, 0, 0, canvas.width, canvas.height);
+
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+            // loader
+            preview.innerHTML = '<div class="loader"></div>';
+            await uploadBytes(storageRef, blob);
+            const url = await getDownloadURL(storageRef);
+
+            preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover">`;
+            return url;
         }
 
-        // submit
+        // --- Submit form ---
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
             successMsg.style.display = 'none';
@@ -385,37 +430,21 @@
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const comment = document.getElementById('comment').value.trim();
-            const rating = document.getElementById('ratingValue').value;
+            const rating = ratingHidden.value;
             const file = photoInput.files[0] || null;
 
-            // convert image to base64 if present
-            let imageBase64 = "";
-            if (file) {
-                try {
-                    imageBase64 = await resizeImage(file);
+            let imageUrl = "";
+            try { imageUrl = await uploadImage(file); }
+            catch (e) { console.error(e); errorMsg.style.display = 'block'; return; }
 
-                    // tronquer si trop long pour EmailJS
-                    const MAX_SIZE = 45000; // ~45Ko
-                    if (imageBase64.length > MAX_SIZE) {
-                        imageBase64 = imageBase64.substring(0, MAX_SIZE);
-                    }
-                } catch (e) {
-                    console.error("Erreur lecture fichier:", e);
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-            }
+            const safeComment = comment.substring(0, 2000);
 
-            // limiter la taille du commentaire
-            let safeComment = comment.substring(0, 2000); // max 2000 caractères
-
-            // payload admin (pour toi)
             const adminParams = {
                 tester_name: name || "(anonyme)",
                 tester_email: email,
                 tester_rating: rating,
                 tester_comment: safeComment,
-                tester_image: imageBase64, // utilise dans ton template (affichage <img src="{{tester_image}}">)
+                tester_image: imageUrl,
                 promo_code: PROMO_CODE
             };
 
@@ -468,18 +497,6 @@ L’équipe Fitloam
             }
         });
 
-        // --- UTILITAIRE : REDIMENSIONNEMENT D’IMAGE ---
-        async function resizeImage(file, maxWidth = 600, maxHeight = 600) {
-            const img = await createImageBitmap(file);
-            const canvas = document.createElement("canvas");
-            const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            // compression JPEG à 70%
-            return canvas.toDataURL("image/jpeg", 0.7);
-        }
     </script>
 </body>
 
