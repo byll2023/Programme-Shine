@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Programme Shine ferargile — Formulaire</title>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #0f766e;
+            --bg: #f6f7f9;
+            --card: #fff;
+            --muted: #6b7280;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Poppins", system-ui, Arial;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+            color: #0f172a;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 700px;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 28px 22px;
+            box-shadow: 0 8px 28px rgba(2, 6, 23, 0.08);
+            animation: fadeIn 0.4s ease;
+        }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 26px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        p.lead {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        form {
+            display: grid;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .field {
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #0f172a;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 15px;
+            transition: border 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.1);
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .rating {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .star {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid #e6e9ef;
+            background: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star.selected {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .uploads {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .upload-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px dashed #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: var(--muted);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #115e59;
+        }
+
+        .btn.secondary {
+            background: #1f2937;
+        }
+
+        .btn.secondary:hover {
+            background: #111827;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .msg {
+            display: none;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .msg.success {
+            background: linear-gradient(90deg, #ecfdf5, #bbf7d0);
+            color: #065f46;
+        }
+
+        .msg.error {
+            background: linear-gradient(90deg, #fff1f2, #fecaca);
+            color: #991b1b;
+        }
+
+        footer {
+            margin-top: 16px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .card {
+                padding: 24px 18px;
+            }
+
+            .star {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            p.lead {
+                font-size: 13px;
+            }
+        }
+    </style>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            emailjs.init("t3wLzAi9_luRE7pJT");
+        });
+    </script>
+</head>
+
+<body>
+    <div class="card">
+        <header>
+            <div class="logo">F</div>
+            <div>
+                <h1>Programme Shine — ferargile</h1>
+                <p class="lead">Merci d'avoir testé nos chaussettes ! Partage ton avis, ta note et une photo si tu veux.
+                </p>
+            </div>
+        </header>
+
+        <main>
+            <form id="testerForm" autocomplete="off">
+                <div class="row">
+                    <div class="field">
+                        <label for="name">Nom (optionnel)</label>
+                        <input id="name" name="name" type="text" placeholder="Ex : Jean Tremblay">
+                    </div>
+                    <div class="field">
+                        <label for="email">E-mail</label>
+                        <input id="email" name="email" type="email" placeholder="exemple@mail.com" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label>Note générale</label>
+                    <div class="rating" id="rating">
+                        <button type="button" class="star" data-value="1">1</button>
+                        <button type="button" class="star" data-value="2">2</button>
+                        <button type="button" class="star" data-value="3">3</button>
+                        <button type="button" class="star" data-value="4">4</button>
+                        <button type="button" class="star" data-value="5">5</button>
+                    </div>
+                    <!-- champ caché pour envoyer la note -->
+                    <input type="hidden" id="ratingValue" name="rating" value="5">
+                </div>
+
+                <div>
+                    <label for="comment">Commentaire</label>
+                    <textarea id="comment" name="comment" placeholder="Ex : Très confortables..."></textarea>
+                </div>
+
+                <div>
+                    <label>Partage ta photo dans le groupe Passion Randonnée Québec 🌲</label>
+                    <div class="uploads" style="flex-direction: column; align-items: flex-start;">
+                        <p style="font-size:14px; color:#475569; line-height:1.6;">
+                            Si tu souhaites aussi partager tes photos 🌲, publie-les directement dans notre groupe
+                            Facebook. C’est simple, rapide et ça inspire toute la communauté 👣 »
+                        </p>
+
+                    </div>
+                </div>
+
+
+                <div class="actions">
+                    <button type="submit" class="btn">Envoyer mon avis</button>
+                    <button type="button" id="skipBtn" class="btn secondary">Aller sur Facebook</button>
+                    <div style="flex:1" class="muted">Tu recevras un e-mail de bienvenue après l'envoi.</div>
+                </div>
+            </form>
+
+            <div class="msg success" id="successMsg">
+                ✅ Merci pour ton retour ! Un e-mail de bienvenue vient d’être envoyé.
+            </div>
+            <div class="msg error" id="errorMsg">
+                ❌ Erreur lors de l'envoi — vérifie ta connexion ou la configuration EmailJS.
+            </div>
+
+        </main>
+
+        <footer>
+            <small>Fitloam — L’échantillon vous a été offert.</small>
+        </footer>
+    </div>
+
+    <script>
+        // --- CONFIG ---
+        const SERVICE_ID = "service_9od4cf4";           // remplace
+        const TEMPLATE_ID_ADMIN = "template_fg9dxx6"; // remplace (mail que tu reçois)
+        const TEMPLATE_ID_CLIENT = "template_rjub2ui"; // remplace (mail client)
+        const FACEBOOK_REVIEWS_URL = "https://www.facebook.com/groups/3202271349939267/?ref=share&mibextid=NSMWBT";
+        const PROMO_CODE = "" // <-- vide ici
+
+        // DOM
+        const stars = document.querySelectorAll('.star');
+        const ratingHidden = document.getElementById('ratingValue');
+        const form = document.getElementById('testerForm');
+        const successMsg = document.getElementById('successMsg');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // rating UI
+        function setSelectedRating(val) {
+            ratingHidden.value = val;
+            stars.forEach(s => {
+                const v = Number(s.dataset.value);
+                s.classList.toggle('selected', v <= val);
+            });
+        }
+        stars.forEach(s => s.addEventListener('click', () => setSelectedRating(Number(s.dataset.value))));
+        setSelectedRating(5);
+
+        // submit
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const comment = document.getElementById('comment').value.trim();
+            const rating = document.getElementById('ratingValue').value;
+
+            // limiter la taille du commentaire
+            let safeComment = comment.substring(0, 2000); // max 2000 caractères
+
+            // payload admin (pour toi)
+            const adminParams = {
+                tester_name: name || "(anonyme)",
+                tester_email: email,
+                tester_rating: rating,
+                tester_comment: comment.substring(0, 2000),
+                promo_code: PROMO_CODE
+            };
+
+            // payload client (message de bienvenue personnalisé)
+            const clientMessage = `
+🌲 Une nouvelle aventure commence avec Fitloam
+
+Bonjour ${name ? name : ""},
+
+Chez Fitloam, nous ne faisons pas que des chaussettes —
+nous prenons soin de votre santé, de votre confort et de votre plaisir d’explorer.
+
+Vous faites désormais partie de la famille ferargile,
+et pour aller plus loin ensemble, nous avons créé un espace unique :
+👉 Passion Randonnée Québec, un groupe Facebook où les membres partagent leurs sorties, créent leurs propres événements et se connectent entre passionnés de nature et d’aventure.
+
+🎁 En rejoignant le groupe, vous bénéficiez de :
+• 15 % de réduction sur ferargile.com chaque 15 du mois (livraison gratuite partout au Canada)
+• Un accès exclusif au programme Shine – testez gratuitement nos produits Fitloam pour nous aider à les perfectionner
+• Une seconde chance de gagner à notre jeu concours ferargile 🎉  → https://jeu-ferargile.web.app
+
+Chez Fitloam, nous croyons que chaque pas compte.
+Plus qu’une marque, c’est une communauté, une famille qui valorise la découverte, la nature et le bien-être.
+
+🌿 Rejoignez-nous dès aujourd’hui → https://www.facebook.com/groups/3202271349939267/?ref=share&mibextid=NSMWBT
+
+À très bientôt sur les sentiers,
+L’équipe Fitloam
+`;
+
+            const clientParams = {
+                to_name: name || "randonneur(se)",
+                to_email: email,
+                message_body: clientMessage,
+                promo_code: PROMO_CODE
+            };
+
+            try {
+                // envoie à l'admin
+                await emailjs.send(SERVICE_ID, TEMPLATE_ID_ADMIN, adminParams);
+                // envoie au client
+                await emailjs.send(SERVICE_ID, TEMPLATE_ID_CLIENT, clientParams);
+
+                // feedback UI
+                form.style.display = 'none';
+                successMsg.style.display = 'block';
+            } catch (err) {
+                console.error("EmailJS error:", err);
+                errorMsg.style.display = 'block';
+            }
+        });
+
+    </script>
+</body>
+
+</html>
