@@ -310,7 +310,7 @@
                 <div class="row">
                     <div class="field">
                         <label for="name">Nom (optionnel)</label>
-                        <input id="name" name="name" type="text" placeholder="Ex : Jean Tremblay">
+                        <input id="name" name="name" type="text" placeholder="">
                     </div>
                     <div class="field">
                         <label for="email">E-mail</label>
@@ -333,7 +333,7 @@
 
                 <div>
                     <label for="comment">Commentaire</label>
-                    <textarea id="comment" name="comment" placeholder="Ex : Très confortables..."></textarea>
+                    <textarea id="comment" name="comment" placeholder=" "></textarea>
                 </div>
 
                 <div>
@@ -365,7 +365,13 @@
         </main>
 
         <footer>
-            <small>Fitloam — L’échantillon vous a été offert.</small>
+            <small>
+                Fitloam — L’échantillon vous a été offert.<br>
+                🌐 <a href="https://ferargile.com" target="_blank"
+                    style="color:#0f766e;font-weight:600;text-decoration:none;">
+                    www.ferargile.com
+                </a>
+            </small>
         </footer>
     </div>
 
@@ -400,6 +406,11 @@
             ev.preventDefault();
             successMsg.style.display = 'none';
             errorMsg.style.display = 'none';
+
+            // redirection vers ton site après 5 secondes
+            setTimeout(() => {
+                window.location.href = "https://ferargile.com";
+            }, 5000);
 
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
