@@ -160,6 +160,7 @@
             transform: scale(1.05);
         }
 
+
         .uploads {
             display: flex;
             gap: 10px;
@@ -229,6 +230,32 @@
             line-height: 1.5;
         }
 
+        /* Spinner simple */
+        .spinner {
+            border: 2px solid #fff;
+            /* couleur du cercle */
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            /* partie animée */
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+            display: inline-block;
+            vertical-align: middle;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+
         .msg.success {
             background: linear-gradient(90deg, #ecfdf5, #bbf7d0);
             color: #065f46;
@@ -293,8 +320,8 @@
         <header>
             <div class="logo">F</div>
             <div>
-                <h1>Programme Shine — ferargile</h1>
-                <p class="lead">Merci d'avoir testé nos chaussettes ! Partage ton avis, ta note et une photo si tu veux.
+                <h1> ferargile — Plateforme e-commerce </h1>
+                <p class="lead">Merci ! Votre avis fait grandir la communauté ferargile !
                 </p>
                 <p style="margin-top:6px;font-size:13px;">
                     🌐 <a href="https://ferargile.com" target="_blank"
@@ -310,7 +337,7 @@
                 <div class="row">
                     <div class="field">
                         <label for="name">Nom (optionnel)</label>
-                        <input id="name" name="name" type="text" placeholder="">
+                        <input id="name" name="name" type="text" placeholder=" ">
                     </div>
                     <div class="field">
                         <label for="email">E-mail</label>
@@ -337,11 +364,13 @@
                 </div>
 
                 <div>
-                    <label>Partage ta photo dans le groupe Passion Randonnée Québec 🌲</label>
+                    <label>Envie d’explorer le Québec autrement ?</label>
                     <div class="uploads" style="flex-direction: column; align-items: flex-start;">
                         <p style="font-size:14px; color:#475569; line-height:1.6;">
-                            Si tu souhaites aussi partager tes photos 🌲, publie-les directement dans notre groupe
-                            Facebook. C’est simple, rapide et ça inspire toute la communauté 👣 »
+                            Rejoins Passion Randonnée Québec 🌲 — une communauté où l’on partage nos découvertes, nos
+                            coups de cœur et nos plus beaux paysages.
+                            Publie tes photos, tes vidéos et inspire d’autres randonneurs à bouger pour le plaisir et la
+                            santé 👣
                         </p>
 
                     </div>
@@ -351,7 +380,13 @@
                 <div class="actions">
                     <button type="submit" class="btn">Envoyer mon avis</button>
                     <button type="button" id="skipBtn" class="btn secondary">Aller sur Facebook</button>
-                    <div style="flex:1" class="muted">Tu recevras un e-mail de bienvenue après l'envoi.</div>
+                    <p class="muted">
+                        🕓 Vos commentaires inspirent la communauté !<br>
+                        Ils seront publiés sur <a href="https://ferargile.com" target="_blank"
+                            style="color:#0f766e;text-decoration:none;font-weight:600;">ferargile.com</a> après une
+                        courte vérification (délai moyen : 72 h).
+                    </p>
+                    <!-- <div style="flex:1" class="muted">Tu recevras un e-mail de bienvenue après l'envoi.</div> -->
                 </div>
             </form>
 
@@ -366,7 +401,7 @@
 
         <footer>
             <small>
-                Fitloam — L’échantillon vous a été offert.<br>
+                ferargile — fier d'etre au Québec<br>
                 🌐 <a href="https://ferargile.com" target="_blank"
                     style="color:#0f766e;font-weight:600;text-decoration:none;">
                     www.ferargile.com
@@ -399,13 +434,21 @@
             });
         }
         stars.forEach(s => s.addEventListener('click', () => setSelectedRating(Number(s.dataset.value))));
-        setSelectedRating(5);
+        // Ne rien colorier au départ
+        setSelectedRating(0);
+
 
         // submit
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
             successMsg.style.display = 'none';
             errorMsg.style.display = 'none';
+
+            const submitBtn = form.querySelector('.btn[type="submit"]');
+            submitBtn.disabled = true;           // désactive le bouton
+            const originalText = submitBtn.textContent;
+            // Ajoute le texte + spinner
+            submitBtn.innerHTML = 'Envoi… <span class="spinner"></span>';
 
             // redirection vers ton site après 5 secondes
             setTimeout(() => {
@@ -475,6 +518,8 @@ L’équipe Fitloam
             } catch (err) {
                 console.error("EmailJS error:", err);
                 errorMsg.style.display = 'block';
+                submitBtn.disabled = false;       // réactive le bouton si erreur
+                submitBtn.innerHTML = originalText;
             }
         });
 
